@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BengkelKu - Katalog &amp; Dashboard UMKM</title>
+    <meta name="description" content="Katalog sparepart UMKM dengan dashboard penjual dan panel admin.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%A7%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* BengkelKu — katalog produk UMKM + dashboard multi-peran.
+           Palet krem hangat + hijau rempah. Mobile-first, tanpa horizontal scroll. */
+
+        :root {
+          --cream: #faf4e8;
+          --cream-deep: #f1e8d6;
+          --card: #fffdf8;
+          --ink: #2b2116;
+          --muted: #6e6152;
+          --line: #e4d9c6;
+          --green: #2f6b4f;
+          --green-deep: #23523c;
+          --green-soft: #e3efe6;
+          --terra: #b45428;
+          --terra-soft: #f7e3d7;
+          --gold: #a87b23;
+          --wa: #1da851;
+          --wa-deep: #168a42;
+          --danger: #a63b2a;
+          --danger-soft: #f8e1dc;
+          --shadow: 0 12px 32px rgba(74, 55, 28, 0.1);
+          --radius: 18px;
+          --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+          --font-body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+          margin: 0;
+          font-family: var(--font-body);
+          font-size: 16px;
+          line-height: 1.6;
+          color: var(--ink);
+          background: radial-gradient(1100px 500px at 90% -10%, #f6ecd6 0%, transparent 60%), var(--cream);
+          -webkit-font-smoothing: antialiased;
+        }
+
+        [hidden] { display: none !important; }
+
+        img { max-width: 100%; display: block; }
+        h1, h2, h3 { margin: 0; font-family: var(--font-display); letter-spacing: -0.01em; line-height: 1.15; }
+        p { margin: 0; }
+        a { color: var(--green); }
+        button, input, select, textarea { font: inherit; color: inherit; }
+
+        :focus-visible { outline: 3px solid rgba(168, 123, 35, 0.6); outline-offset: 2px; border-radius: 6px; }
+
+        .container { width: min(1180px, 100% - 40px); margin-inline: auto; }
+
+        /* ---------- Header ---------- */
+        .site-header { position: sticky; top: 0; z-index: 50; background: rgba(250, 244, 232, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; padding-block: 13px; flex-wrap: wrap; }
+        .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
+        .main-nav { display: flex; gap: 4px; padding: 5px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; }
+        .nav-btn { appearance: none; border: 0; background: transparent; padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: 0.94rem; color: var(--muted); cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
+        .nav-btn:hover { color: var(--ink); }
+        .nav-btn.is-active { background: var(--green); color: #fff; }
+
+        .user-area { display: flex; align-items: center; gap: 10px; }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 5px 6px 5px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; }
+        .avatar { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 50%; background: var(--green); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 0.74rem; }
+        .user-chip strong { display: block; font-size: 0.85rem; line-height: 1.2; }
+        .role-badge { display: inline-block; margin-top: 2px; padding: 1px 8px; border-radius: 999px; background: var(--cream-deep); color: var(--muted); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+        .role-admin { background: #efe2c4; color: #7a5a11; }
+        .role-seller { background: var(--green-soft); color: var(--green-deep); }
+        .role-pembeli { background: var(--terra-soft); color: #8a3c15; }
+
+        /* ---------- Hero ---------- */
+        .hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(28px, 5vw, 64px); align-items: center; padding: clamp(36px, 6vw, 76px) 0 clamp(28px, 4vw, 48px); }
+        .eyebrow { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 14px; }
+        .hero h1 { font-size: clamp(2.3rem, 5.2vw, 3.7rem); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; }
+        .hero h1 em { font-style: normal; color: var(--green); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 3px; text-underline-offset: 7px; }
+        .lead { margin-top: 18px; max-width: 56ch; color: var(--muted); font-size: 1.05rem; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+        /* ---------- Katalog ---------- */
+        .catalog { padding: 12px 0 64px; scroll-margin-top: 88px; }
+        .section-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 20px; }
+        .section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
+        .result-info { color: var(--muted); font-size: 0.94rem; }
+        .controls { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding: 16px; margin-bottom: 26px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .field { display: grid; gap: 6px; min-width: 0; }
+        .field-label { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+        input[type='search'], input[type='text'], input[type='number'], input[type='url'], input[type='email'], input[type='password'], select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-size: 0.95rem; }
+        textarea { resize: vertical; min-height: 76px; }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 20px; }
+        .product-card { display: flex; flex-direction: column; overflow: hidden; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .product-media { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; background: linear-gradient(135deg, var(--green-soft), #f5e9cf); }
+        .product-media.is-featured { background: linear-gradient(135deg, #f9e7b8, var(--green-soft)); }
+        .product-emoji { font-size: 3.4rem; filter: drop-shadow(0 8px 12px rgba(43, 33, 22, 0.16)); }
+        .product-img { width: 100%; height: 100%; object-fit: cover; }
+        .badge-featured { position: absolute; top: 10px; left: 10px; z-index: 1; padding: 4px 10px; border-radius: 999px; background: var(--gold); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em; }
+        .product-body { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 16px 18px 18px; }
+        .badge-cat { align-self: flex-start; padding: 3px 10px; border-radius: 999px; background: var(--green-soft); color: var(--green-deep); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+        .product-name { font-size: 1.1rem; line-height: 1.25; }
+        .product-desc { display: -webkit-box; overflow: hidden; color: var(--muted); font-size: 0.87rem; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .product-seller { color: var(--muted); font-size: 0.76rem; }
+        .product-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 6px; }
+        .price { color: var(--green-deep); font-family: var(--font-display); font-size: 1.08rem; font-weight: 800; }
+        .stock { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--cream-deep); color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
+        .stock-empty { background: var(--danger-soft); color: var(--danger); }
+        .stock-aktif { background: var(--green-soft); color: var(--green-deep); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border: 1px solid transparent; border-radius: 12px; background: transparent; font-weight: 700; font-size: 0.94rem; text-decoration: none; cursor: pointer; transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease; }
+        .btn:active { transform: translateY(1px); }
+        .btn-primary { background: var(--green); color: #fff; box-shadow: 0 6px 16px rgba(47, 107, 79, 0.28); }
+        .btn-primary:hover { background: var(--green-deep); }
+        .btn-ghost { border-color: var(--line); color: var(--ink); }
+        .btn-ghost:hover { background: var(--cream-deep); }
+        .btn-wa { width: 100%; margin-top: 4px; padding: 10px 14px; background: var(--wa); color: #fff; }
+        .btn-wa:hover { background: var(--wa-deep); }
+        .btn-wa.is-disabled { background: #d8d0c1; color: #7c7263; cursor: not-allowed; }
+
+        .empty-state { padding: 56px 20px; text-align: center; color: var(--muted); background: var(--card); border: 2px dashed var(--line); border-radius: var(--radius); grid-column: 1 / -1; }
+        .empty-state strong { display: block; margin-bottom: 4px; color: var(--ink); font-family: var(--font-display); font-size: 1.25rem; }
+        .empty-state .btn { margin-top: 16px; }
+
+        /* ---------- Login ---------- */
+        #view-login { display: grid; place-items: center; padding: 44px 0 64px; min-height: 60vh; }
+        .auth-card { width: min(470px, 100%); padding: clamp(24px, 4vw, 36px); background: var(--card); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); }
+        .auth-card h1 { font-size: clamp(1.7rem, 4vw, 2rem); margin-bottom: 6px; }
+        .auth-sub { color: var(--muted); font-size: 0.94rem; margin-bottom: 22px; }
+        .error-text { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--danger-soft); color: var(--danger); font-size: 0.88rem; font-weight: 600; }
+        .demo-box { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); }
+        .demo-box h2 { margin-bottom: 10px; font-family: var(--font-body); font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+        .demo-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--cream); font-size: 0.85rem; text-align: left; cursor: pointer; }
+        .demo-row:hover { background: var(--cream-deep); }
+        .demo-row + .demo-row { margin-top: 8px; }
+        .demo-row span { font-weight: 700; }
+        .demo-row code { color: var(--muted); font-family: inherit; font-size: 0.8rem; }
+        .auth-hint { margin-top: 14px; font-size: 0.8rem; color: var(--muted); }
+
+        /* ---------- Dashboard ---------- */
+        #view-seller, #view-admin { padding-top: 40px; padding-bottom: 64px; }
+        .dashboard-head { margin-bottom: 8px; }
+        .dashboard-head h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+        .muted { color: var(--muted); }
+        .note-banner { margin: 16px 0 22px; padding: 12px 16px; border: 1px solid #ebc8b2; border-radius: 14px; background: var(--terra-soft); color: #6b3a20; font-size: 0.9rem; }
+        .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stats-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .stat { display: grid; gap: 2px; padding: 14px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+        .stat-label { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+        .stat strong { font-family: var(--font-display); font-size: 1.9rem; line-height: 1.15; }
+        .stat small { color: var(--muted); font-size: 0.78rem; }
+        .dashboard-grid { display: grid; grid-template-columns: minmax(320px, 380px) minmax(0, 1fr); gap: 24px; align-items: start; }
+        .stack { display: grid; gap: 24px; }
+
+        .panel { padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .panel h2 { margin-bottom: 16px; font-size: 1.32rem; }
+        .panel-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+        .panel-head h2 { margin: 0; }
+        .panel-note { color: var(--muted); font-size: 0.85rem; }
+
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+        .btn-small { padding: 7px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--cream-deep); font-size: 0.82rem; }
+        .btn-small:hover { background: var(--line); }
+        .btn-danger { border-color: #edc4bb; background: var(--danger-soft); color: var(--danger); }
+        .btn-danger:hover { background: #f3d2cb; }
+
+        form .field + .field, form .field-row + .field { margin-top: 12px; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .field-row:first-child { margin-top: 0; }
+        .field-row .field { margin-top: 0; }
+        .checkbox-field { display: flex; align-items: center; gap: 9px; margin-top: 14px; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+        .checkbox-field input { width: 17px; height: 17px; accent-color: var(--green); flex: none; }
+        .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+        .form-hint { margin-top: 8px; color: var(--muted); font-size: 0.78rem; }
+
+        .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+        table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.91rem; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+        th { background: var(--cream-deep); color: var(--muted); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+        tr:last-child td { border-bottom: 0; }
+        .table-product { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+        .table-emoji { font-size: 1.05rem; }
+        .table-actions { display: inline-flex; gap: 6px; white-space: nowrap; }
+        .table-empty { padding: 22px 12px; text-align: center; color: var(--muted); }
+        .user-meta { display: block; color: var(--muted); font-size: 0.78rem; }
+
+        .cat-list { display: grid; gap: 8px; margin-top: 18px; }
+        .cat-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--cream); }
+        .cat-row strong { font-size: 0.95rem; }
+        .cat-desc { color: var(--muted); font-size: 0.8rem; }
+        .cat-count { padding: 2px 9px; border-radius: 999px; background: var(--cream-deep); color: var(--muted); font-size: 0.76rem; white-space: nowrap; }
+        .cat-actions { display: flex; align-items: center; gap: 6px; }
+
+        /* ---------- Footer & Toast ---------- */
+        .site-footer { margin-top: 72px; padding: 26px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.87rem; }
+        .toast { position: fixed; left: 50%; bottom: 24px; z-index: 100; max-width: min(92vw, 480px); padding: 12px 20px; border-radius: 12px; background: var(--ink); color: #fff; font-size: 0.92rem; font-weight: 600; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.32); transform: translateX(-50%); animation: toast-in 0.25s ease; transition: opacity 0.3s ease; }
+        .toast[hidden] { display: none; }
+        .toast-success { background: var(--green-deep); }
+        .toast-warn { background: #9a4b22; }
+        @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+        /* ---------- Responsif ---------- */
+        @media (max-width: 980px) { .dashboard-grid { grid-template-columns: 1fr; } .stats-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) { .controls { grid-template-columns: 1fr; } .stats { grid-template-columns: 1fr; } .stats-4 { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 620px) { .brand { font-size: 1.15rem; } .nav-btn { padding: 7px 13px; font-size: 0.86rem; } .user-chip { padding-left: 8px; } .user-chip strong { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+        @media (max-width: 560px) { .product-grid { grid-template-columns: 1fr; } .section-head { align-items: flex-start; } }
+        @media (max-width: 430px) { .brand-name { display: none; } .stats-4 { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="#" class="brand" onclick="event.preventDefault(); go('katalog')">
+                <span class="brand-name">BengkelKu</span>
+            </a>
+            <nav class="main-nav" id="mainNav" aria-label="Navigasi utama"></nav>
+            <div class="user-area" id="userArea"></div>
+        </div>
+    </header>
+
+    <!-- ===== VIEW: LOGIN ===== -->
+    <main id="view-login" hidden>
+        <div class="container">
+            <div class="auth-card">
+                <p class="eyebrow">Masuk ke BengkelKu</p>
+                <h1>Kelola toko Anda</h1>
+                <p class="auth-sub">Gunakan akun yang sesuai peran Anda: admin, penjual, atau pembeli. Pembeli tetap dapat melihat katalog tanpa login.</p>
+
+                <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+                    <div class="field">
+                        <label class="field-label" for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" autocomplete="username" placeholder="nama@bengkelku.id" required>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" style="flex:1;">Masuk</button>
+                        <button type="button" class="btn btn-ghost" onclick="go('katalog')">Lihat Katalog</button>
+                    </div>
+                    <p class="error-text" id="loginError" hidden></p>
+                </form>
+
+                <div class="demo-box">
+                    <h2>Akun demo (klik untuk mengisi)</h2>
+                    <button type="button" class="demo-row" data-action="demo" data-email="admin@bengkelku.id" data-password="admin123">
+                        <span>Admin &middot; Rina Admin</span><code>admin@bengkelku.id / admin123</code>
+                    </button>
+                    <button type="button" class="demo-row" data-action="demo" data-email="budi@bengkelku.id" data-password="seller123">
+                        <span>Penjual &middot; Budi Motor</span><code>budi@bengkelku.id / seller123</code>
+                    </button>
+                    <button type="button" class="demo-row" data-action="demo" data-email="sari@bengkelku.id" data-password="seller123">
+                        <span>Penjual &middot; Sari Sparepart</span><code>sari@bengkelku.id / seller123</code>
+                    </button>
+                    <button type="button" class="demo-row" data-action="demo" data-email="dedi@pembeli.id" data-password="pembeli123">
+                        <span>Pembeli &middot; Dedi Kurniawan</span><code>dedi@pembeli.id / pembeli123</code>
+                    </button>
+                    <p class="auth-hint">Demo LocalStorage: akun disimpan di browser ini, jangan gunakan password asli.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== VIEW: KATALOG (PEMBELI / PUBLIK) ===== -->
+    <main id="view-catalog">
+        <section class="hero container">
+            <div>
+                <p class="eyebrow">UMKM Otomotif Lokal</p>
+                <h1>Suku cadang <em>berkualitas</em> untuk kendaraan Anda.</h1>
+                <p class="lead">Cari dan pesan sparepart secara mudah. Katalog BengkelKu menampilkan stok terkini dari penjual terverifikasi dan langsung terhubung ke WhatsApp penjual.</p>
+                <div class="hero-actions">
+                    <a href="#katalog-produk" class="btn btn-primary">Lihat Produk</a>
+                    <button class="btn btn-ghost" id="heroAuthBtn" onclick="go('login')">Masuk sebagai Pengelola</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="katalog-produk" class="catalog container">
+            <div class="section-head">
+                <h2>Katalog Sparepart</h2>
+                <div class="result-info" id="resultCount">Menampilkan 0 produk</div>
+            </div>
+
+            <div class="controls">
+                <div class="field">
+                    <label class="field-label" for="searchInput">Pencarian</label>
+                    <input type="search" id="searchInput" placeholder="Cari nama atau deskripsi..." oninput="renderCatalog()">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="categoryFilter">Kategori</label>
+                    <select id="categoryFilter" onchange="renderCatalog()">
+                        <option value="">Semua Kategori</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="sortOption">Urutkan</label>
+                    <select id="sortOption" onchange="renderCatalog()">
+                        <option value="nameAsc">A - Z (Nama)</option>
+                        <option value="priceAsc">Harga: Rendah ke Tinggi</option>
+                        <option value="priceDesc">Harga: Tinggi ke Rendah</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="catalogGrid" class="product-grid"></div>
+        </section>
+    </main>
+
+    <!-- ===== VIEW: DASHBOARD PENJUAL ===== -->
+    <main id="view-seller" class="container" hidden>
+        <header class="dashboard-head">
+            <h1>Dashboard Penjual</h1>
+            <p class="muted" id="sellerGreeting">Kelola produk dan kategori toko Anda.</p>
+        </header>
+
+        <div class="note-banner">
+            <strong>Catatan:</strong> Semua data tersimpan di LocalStorage browser ini. Jangan hapus cache/data browser jika tidak ingin kehilangan data.
+        </div>
+
+        <div class="stats stats-4">
+            <div class="stat">
+                <span class="stat-label">Produk Saya</span>
+                <strong id="sellerSumProduk">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Total Stok</span>
+                <strong id="sellerSumStok">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Kategori</span>
+                <strong id="sellerSumKategori">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Nilai Inventaris</span>
+                <strong id="sellerSumNilai">Rp 0</strong>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h2 id="formTitle">Tambah Produk</h2>
+                <form id="productForm" onsubmit="handleSaveProduct(event)">
+                    <input type="hidden" id="formId">
+
+                    <div class="field">
+                        <label class="field-label" for="formNama">Nama Produk</label>
+                        <input type="text" id="formNama" placeholder="Contoh: Busi NGK Platinum" maxlength="80" required>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="formDesc">Deskripsi Singkat</label>
+                        <textarea id="formDesc" placeholder="Jelaskan spesifikasi atau peruntukan motor..." maxlength="240"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="formKategori">Kategori</label>
+                        <select id="formKategori" required></select>
+                        <p class="form-hint" id="categoryHint"></p>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label class="field-label" for="formHarga">Harga (Rp)</label>
+                            <input type="number" id="formHarga" min="0" step="500" placeholder="0" required>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="formStok">Stok</label>
+                            <input type="number" id="formStok" min="0" step="1" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="formImage">URL Gambar (Opsional)</label>
+                        <input type="url" id="formImage" placeholder="https://...">
+                    </div>
+
+                    <label class="checkbox-field">
+                        <input type="checkbox" id="formUnggulan">
+                        Tandai sebagai Produk Unggulan
+                    </label>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Simpan Data</button>
+                        <button type="button" class="btn btn-ghost" onclick="resetProductForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Inventaris Saya</h2>
+                    <span class="panel-note" id="sellerTableInfo"></span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th style="text-align: right;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sellerTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top: 24px;">
+            <div class="panel-head">
+                <h2>Kategori Produk</h2>
+                <span class="panel-note">Kategori dipakai bersama oleh semua penjual.</span>
+            </div>
+
+            <form id="categoryForm" onsubmit="handleSaveCategory(event)">
+                <input type="hidden" id="catId">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="catNama">Nama Kategori</label>
+                        <input type="text" id="catNama" maxlength="30" placeholder="Contoh: Mesin" required>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="catDesc">Deskripsi (Opsional)</label>
+                        <input type="text" id="catDesc" maxlength="80" placeholder="Contoh: Sparepart area mesin">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="catSubmit">Simpan Kategori</button>
+                    <button type="button" class="btn btn-ghost" onclick="resetCategoryForm()">Batal</button>
+                </div>
+            </form>
+
+            <div class="cat-list" id="categoryList"></div>
+        </div>
+    </main>
+
+    <!-- ===== VIEW: DASHBOARD ADMIN ===== -->
+    <main id="view-admin" class="container" hidden>
+        <header class="dashboard-head">
+            <h1>Kelola Pengguna</h1>
+            <p class="muted">Atur akun admin, penjual, dan pembeli pada aplikasi ini.</p>
+        </header>
+
+        <div class="note-banner">
+            <strong>Catatan:</strong> Akun dan kata sandi disimpan di LocalStorage untuk keperluan demo. Jangan gunakan kata sandi asli.
+        </div>
+
+        <div class="stats stats-4">
+            <div class="stat">
+                <span class="stat-label">Total Pengguna</span>
+                <strong id="adminSumTotal">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Admin</span>
+                <strong id="adminSumAdmin">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Penjual</span>
+                <strong id="adminSumSeller">0</strong>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Pembeli</span>
+                <strong id="adminSumPembeli">0</strong>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h2 id="userFormTitle">Tambah Pengguna</h2>
+                <form id="userForm" onsubmit="handleSaveUser(event)">
+                    <input type="hidden" id="userId">
+
+                    <div class="field">
+                        <label class="field-label" for="userName">Nama Lengkap</label>
+                        <input type="text" id="userName" maxlength="60" placeholder="Contoh: Budi Santoso" required>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="userEmail">Email</label>
+                        <input type="email" id="userEmail" maxlength="80" placeholder="nama@bengkelku.id" required>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="userPassword">Password</label>
+                        <input type="password" id="userPassword" minlength="6" maxlength="60" autocomplete="new-password" placeholder="Minimal 6 karakter">
+                        <p class="form-hint" id="userPasswordHint">Wajib diisi untuk pengguna baru.</p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="userRole">Peran</label>
+                        <select id="userRole" required>
+                            <option value="pembeli">Pembeli &mdash; hanya katalog &amp; WhatsApp</option>
+                            <option value="seller">Penjual &mdash; kelola produk &amp; kategori</option>
+                            <option value="admin">Admin &mdash; kelola pengguna</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="userPhone">Nomor WhatsApp</label>
+                        <input type="text" id="userPhone" maxlength="20" placeholder="08xxxxxxxxxx">
+                        <p class="form-hint">Dipakai pembeli untuk menghubungi penjual.</p>
+                    </div>
+
+                    <label class="checkbox-field">
+                        <input type="checkbox" id="userActive" checked>
+                        Akun aktif (bisa login)
+                    </label>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Simpan Pengguna</button>
+                        <button type="button" class="btn btn-ghost" onclick="resetUserForm()">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>Daftar Pengguna</h2>
+                    <span class="panel-note" id="adminTableInfo"></span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Peran</th>
+                                <th>WhatsApp</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer container">
+        &copy; 2026 BengkelKu. Aplikasi demo tanpa backend, data tersimpan di LocalStorage.
+    </footer>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script>
+        'use strict';
+
+        /* =========================================================
+           1. KONSTANTA & PENYIMPANAN (LocalStorage)
+           ========================================================= */
+        const LS = {
+            users: 'bengkel_users',
+            categories: 'bengkel_categories',
+            products: 'bengkel_products',
+            session: 'bengkel_session',
+            initialized: 'bengkel_initialized'
+        };
+
+        const ROLE_LABEL = { admin: 'Admin', seller: 'Penjual', pembeli: 'Pembeli' };
+        const ROLE_CLASS = { admin: 'role-admin', seller: 'role-seller', pembeli: 'role-pembeli' };
+        const ACCESS = {
+            admin: ['katalog', 'admin'],
+            seller: ['katalog', 'seller'],
+            pembeli: ['katalog']
+        };
+        const STORE_WA = '6281234567890';
+
+        const state = { view: 'katalog' };
+
+        const store = {
+            users: [],
+            categories: [],
+            products: [],
+            session: null
+        };
+
+        function readJSON(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) return fallback;
+                return JSON.parse(raw);
+            } catch (err) {
+                return fallback;
+            }
+        }
+
+        function writeJSON(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (err) {
+                showToast('Gagal menyimpan data ke LocalStorage.', 'warn');
+            }
+        }
+
+        /* =========================================================
+           2. DATA DUMMY (SEED)
+           ========================================================= */
+        function seedUsers() {
+            return [
+                {
+                    id: 'u-admin-1', nama: 'Rina Admin', email: 'admin@bengkelku.id', password: 'admin123',
+                    role: 'admin', telepon: '6281200000001', toko: '', aktif: true, dibuat: '2026-01-05'
+                },
+                {
+                    id: 'u-seller-1', nama: 'Budi Santoso', email: 'budi@bengkelku.id', password: 'seller123',
+                    role: 'seller', telepon: '6281234567890', toko: 'Budi Motor', aktif: true, dibuat: '2026-01-08'
+                },
+                {
+                    id: 'u-seller-2', nama: 'Sari Wulandari', email: 'sari@bengkelku.id', password: 'seller123',
+                    role: 'seller', telepon: '6281298765432', toko: 'Sari Sparepart', aktif: true, dibuat: '2026-02-02'
+                },
+                {
+                    id: 'u-buyer-1', nama: 'Dedi Kurniawan', email: 'dedi@pembeli.id', password: 'pembeli123',
+                    role: 'pembeli', telepon: '628111222333', toko: '', aktif: true, dibuat: '2026-02-15'
+                },
+                {
+                    id: 'u-buyer-2', nama: 'Nur Aisyah', email: 'nur@pembeli.id', password: 'pembeli123',
+                    role: 'pembeli', telepon: '628555666777', toko: '', aktif: true, dibuat: '2026-03-01'
+                }
+            ];
+        }
+
+        function seedCategories() {
+            return [
+                { id: 'cat-mesin', nama: 'Mesin', deskripsi: 'Sparepart area mesin dan pengapian' },
+                { id: 'cat-listrik', nama: 'Kelistrikan', deskripsi: 'Aki, lampu, dan komponen listrik' },
+                { id: 'cat-roda', nama: 'Roda', deskripsi: 'Ban, rem, dan komponen roda' },
+                { id: 'cat-aksesoris', nama: 'Aksesoris', deskripsi: 'Pelengkap dan aksesoris kendaraan' }
+            ];
+        }
+
+        function seedProducts() {
+            return [
+                { id: '1', nama: 'Busi NGK Platinum', kategori: 'Mesin', harga: 35000, stok: 50, deskripsi: 'Busi tahan lama, pembakaran lebih optimal untuk motor bebek dan matic.', imageUrl: '', unggulan: true, sellerId: 'u-seller-1' },
+                { id: '2', nama: 'Kampas Rem Depan', kategori: 'Roda', harga: 45000, stok: 30, deskripsi: 'Kampas rem cakram pakem dan tidak merusak piringan.', imageUrl: '', unggulan: false, sellerId: 'u-seller-1' },
+                { id: '3', nama: 'Oli Mesin 1L Sintetik', kategori: 'Mesin', harga: 65000, stok: 100, deskripsi: 'Pelumas sintetik, menjaga suhu mesin tetap dingin saat perjalanan jauh.', imageUrl: '', unggulan: true, sellerId: 'u-seller-1' },
+                { id: '4', nama: 'Ban Luar Tubeless', kategori: 'Roda', harga: 195000, stok: 0, deskripsi: 'Ban profil standar untuk kenyamanan berkendara harian.', imageUrl: '', unggulan: false, sellerId: 'u-seller-2' },
+                { id: '5', nama: 'Aki Kering 12V', kategori: 'Kelistrikan', harga: 220000, stok: 15, deskripsi: 'Bebas perawatan, starter langsung nyala. Cocok untuk matic injeksi.', imageUrl: '', unggulan: true, sellerId: 'u-seller-2' },
+                { id: '6', nama: 'Bohlam LED Depan', kategori: 'Kelistrikan', harga: 45000, stok: 40, deskripsi: 'Cahaya putih terang, daya rendah, awet.', imageUrl: '', unggulan: false, sellerId: 'u-seller-1' },
+                { id: '7', nama: 'Rantai Motor Set', kategori: 'Mesin', harga: 135000, stok: 25, deskripsi: 'Gir depan belakang dan rantai. Material baja kuat tarikan berat.', imageUrl: '', unggulan: false, sellerId: 'u-seller-2' },
+                { id: '8', nama: 'Spion Standar', kategori: 'Aksesoris', harga: 35000, stok: 60, deskripsi: 'Spion cembung jernih, model standar pabrik.', imageUrl: '', unggulan: false, sellerId: 'u-seller-1' }
+            ];
+        }
+
+        /* =========================================================
+           3. UTILITAS
+           ========================================================= */
+        function esc(value) {
+            return String(value === undefined || value === null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function safeImageUrl(url) {
+            const value = String(url || '').trim();
+            return /^https?:\/\/[^\s"'<>]+$/i.test(value) ? value : '';
+        }
+
+        function normalizePhone(phone) {
+            let digits = String(phone || '').replace(/[^\d]/g, '');
+            if (!digits) return '';
+            if (digits.startsWith('0')) digits = '62' + digits.slice(1);
+            else if (digits.startsWith('8')) digits = '62' + digits;
+            return digits;
+        }
+
+        function formatRp(angka) {
+            return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
+        }
+
+        function initials(name) {
+            return String(name || '?')
+                .trim()
+                .split(/\s+/)
+                .slice(0, 2)
+                .map(function (part) { return part.charAt(0).toUpperCase(); })
+                .join('');
+        }
+
+        function genId(prefix) {
+            return (prefix ? prefix + '-' : '') + Date.now().toString() + '-' + Math.floor(Math.random() * 1000);
+        }
+
+        let toastTimeout;
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = 'toast';
+            if (type === 'success') toast.classList.add('toast-success');
+            if (type === 'warn') toast.classList.add('toast-warn');
+            toast.hidden = false;
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(function () { toast.hidden = true; }, 3000);
+        }
+
+        /* =========================================================
+           4. MUAT & SIMPAN DATA
+           ========================================================= */
+        function loadStore() {
+            if (localStorage.getItem(LS.initialized) !== '1') {
+                store.users = seedUsers();
+                store.categories = seedCategories();
+                store.products = seedProducts();
+                writeJSON(LS.users, store.users);
+                writeJSON(LS.categories, store.categories);
+                writeJSON(LS.products, store.products);
+                localStorage.setItem(LS.initialized, '1');
+                return;
+            }
+
+            store.users = readJSON(LS.users, []);
+            store.categories = readJSON(LS.categories, []);
+            store.products = readJSON(LS.products, []);
+            if (!Array.isArray(store.users)) store.users = [];
+            if (!Array.isArray(store.categories)) store.categories = [];
+            if (!Array.isArray(store.products)) store.products = [];
+
+            // Migrasi data prototipe lama: produk belum punya sellerId.
+            const fallbackSeller = store.users.find(function (u) { return u.role === 'seller'; });
+            let migrated = false;
+            store.products.forEach(function (p) {
+                if (!p.sellerId && fallbackSeller) {
+                    p.sellerId = fallbackSeller.id;
+                    migrated = true;
+                }
+                if (!Array.isArray(p.unggulan) && typeof p.unggulan !== 'boolean') p.unggulan = false;
+            });
+            if (migrated) writeJSON(LS.products, store.products);
+        }
+
+        function saveProducts() { writeJSON(LS.products, store.products); }
+        function saveUsers() { writeJSON(LS.users, store.users); }
+        function saveCategories() { writeJSON(LS.categories, store.categories); }
+
+        /* =========================================================
+           5. SESI & OTORISASI
+           ========================================================= */
+        function getSession() {
+            const session = readJSON(LS.session, null);
+            return session && session.userId ? session : null;
+        }
+
+        function currentUser() {
+            const session = getSession();
+            if (!session) return null;
+            const user = store.users.find(function (u) { return u.id === session.userId; });
+            if (!user || user.aktif === false) return null;
+            return user;
+        }
+
+        function canAccess(view) {
+            const user = currentUser();
+            if (view === 'katalog' || view === 'login') return true;
+            if (!user) return false;
+            return (ACCESS[user.role] || []).indexOf(view) > -1;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const error = document.getElementById('loginError');
+
+            if (!email || !password) {
+                error.innerText = 'Email dan password wajib diisi.';
+                error.hidden = false;
+                return;
+            }
+
+            const user = store.users.find(function (u) {
+                return String(u.email || '').toLowerCase() === email;
+            });
+
+            if (!user || user.password !== password) {
+                error.innerText = 'Email atau password salah.';
+                error.hidden = false;
+                return;
+            }
+
+            if (user.aktif === false) {
+                error.innerText = 'Akun ini sedang dinonaktifkan. Hubungi admin.';
+                error.hidden = false;
+                return;
+            }
+
+            writeJSON(LS.session, { userId: user.id, at: Date.now() });
+            error.hidden = true;
+            document.getElementById('loginForm').reset();
+            renderChrome();
+            go(user.role === 'admin' ? 'admin' : user.role === 'seller' ? 'seller' : 'katalog');
+            showToast('Selamat datang, ' + user.nama + '!', 'success');
+        }
+
+        function logout() {
+            localStorage.removeItem(LS.session);
+            renderChrome();
+            go('katalog');
+            showToast('Anda telah keluar.', 'info');
+        }
+
+        /* =========================================================
+           6. NAVIGASI & CHROME
+           ========================================================= */
+        function renderChrome() {
+            const user = currentUser();
+            const nav = document.getElementById('mainNav');
+            const area = document.getElementById('userArea');
+
+            const items = [{ view: 'katalog', label: 'Katalog' }];
+            if (user && user.role === 'seller') items.push({ view: 'seller', label: 'Dashboard Toko' });
+            if (user && user.role === 'admin') items.push({ view: 'admin', label: 'Kelola Pengguna' });
+
+            nav.innerHTML = items.map(function (item) {
+                return '<button class="nav-btn" data-view="' + item.view + '" onclick="go(\'' + item.view + '\')">' + esc(item.label) + '</button>';
+            }).join('');
+
+            if (user) {
+                area.innerHTML =
+                    '<div class="user-chip">' +
+                        '<span class="avatar" aria-hidden="true">' + esc(initials(user.nama)) + '</span>' +
+                        '<div>' +
+                            '<strong>' + esc(user.nama) + '</strong>' +
+                            '<span class="role-badge ' + (ROLE_CLASS[user.role] || '') + '">' + esc(ROLE_LABEL[user.role] || user.role) + '</span>' +
+                        '</div>' +
+                        '<button type="button" class="btn btn-ghost btn-small" onclick="logout()">Keluar</button>' +
+                    '</div>';
+            } else {
+                area.innerHTML = '<button type="button" class="btn btn-primary btn-small" onclick="go(\'login\')">Masuk</button>';
+            }
+
+            const heroBtn = document.getElementById('heroAuthBtn');
+            if (heroBtn) heroBtn.hidden = !!user;
+            renderActiveNav();
+        }
+
+        function renderActiveNav() {
+            document.querySelectorAll('#mainNav .nav-btn').forEach(function (btn) {
+                btn.classList.toggle('is-active', btn.dataset.view === state.view);
+            });
+        }
+
+        function go(view) {
+            const user = currentUser();
+
+            if (view === 'login' && user) view = 'katalog';
+
+            if (!canAccess(view)) {
+                if (view === 'katalog') {
+                    view = 'login';
+                } else {
+                    showToast('Anda tidak memiliki akses ke halaman tersebut.', 'warn');
+                    view = user ? 'katalog' : 'login';
+                }
+            }
+
+            state.view = view;
+            ['login', 'katalog', 'seller', 'admin'].forEach(function (name) {
+                const el = document.getElementById('view-' + name);
+                if (el) el.hidden = name !== view;
+            });
+
+            renderActiveNav();
+
+            if (view === 'katalog') renderCatalog();
+            if (view === 'seller') renderSeller();
+            if (view === 'admin') renderAdmin();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* =========================================================
+           7. KATALOG (PEMBELI)
+           ========================================================= */
+        function fillCatalogCategories() {
+            const select = document.getElementById('categoryFilter');
+            const current = select.value;
+            const names = store.categories.map(function (c) { return c.nama; });
+            select.innerHTML = '<option value="">Semua Kategori</option>' + names.map(function (nama) {
+                return '<option value="' + esc(nama) + '">' + esc(nama) + '</option>';
+            }).join('');
+            if (names.indexOf(current) > -1) select.value = current;
+        }
+
+        function renderCatalog() {
+            fillCatalogCategories();
+
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const sort = document.getElementById('sortOption').value;
+            const buyer = currentUser();
+
+            let filtered = store.products.filter(function (p) {
+                const haystack = ((p.nama || '') + ' ' + (p.deskripsi || '')).toLowerCase();
+                return haystack.indexOf(search) > -1;
+            });
+            if (category) filtered = filtered.filter(function (p) { return p.kategori === category; });
+
+            filtered.sort(function (a, b) {
+                if (sort === 'priceAsc') return Number(a.harga) - Number(b.harga);
+                if (sort === 'priceDesc') return Number(b.harga) - Number(a.harga);
+                return String(a.nama).localeCompare(String(b.nama));
+            });
+
+            document.getElementById('resultCount').innerText = 'Menampilkan ' + filtered.length + ' produk';
+            const grid = document.getElementById('catalogGrid');
+
+            if (filtered.length === 0) {
+                grid.innerHTML =
+                    '<div class="empty-state">' +
+                        '<strong>Tidak ada produk ditemukan</strong>' +
+                        '<p>Coba gunakan kata kunci atau kategori yang berbeda.</p>' +
+                        '<button class="btn btn-ghost" onclick="resetCatalogFilters()">Reset Filter</button>' +
+                    '</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(function (p) {
+                const outOfStock = Number(p.stok) <= 0;
+                const seller = store.users.find(function (u) { return u.id === p.sellerId; });
+                const sellerToko = seller && seller.toko ? seller.toko : (seller ? seller.nama : 'BengkelKu');
+                const waNumber = normalizePhone((seller && seller.telepon) || STORE_WA);
+                const pembeli = buyer && buyer.role === 'pembeli' ? buyer.nama : '';
+                const teks = 'Halo ' + sellerToko + ', saya ' + (pembeli || 'tertarik') +
+                    ' ingin memesan: ' + p.nama + ' (' + formatRp(p.harga) + '). Apakah stok masih tersedia?';
+                const waLink = 'https://wa.me/' + encodeURIComponent(waNumber) + '?text=' + encodeURIComponent(teks);
+                const img = safeImageUrl(p.imageUrl);
+
+                return '' +
+                    '<article class="product-card">' +
+                        '<div class="product-media ' + (p.unggulan ? 'is-featured' : '') + '">' +
+                            (p.unggulan ? '<span class="badge-featured">⭐ Unggulan</span>' : '') +
+                            (img
+                                ? '<img src="' + esc(img) + '" alt="' + esc(p.nama) + '" class="product-img" loading="lazy">'
+                                : '<span class="product-emoji" aria-hidden="true">🔧</span>') +
+                        '</div>' +
+                        '<div class="product-body">' +
+                            '<span class="badge-cat">' + esc(p.kategori) + '</span>' +
+                            '<h3 class="product-name">' + esc(p.nama) + '</h3>' +
+                            '<p class="product-desc">' + esc(p.deskripsi || 'Tidak ada deskripsi') + '</p>' +
+                            '<p class="product-seller">Dijual oleh ' + esc(sellerToko) + '</p>' +
+                            '<div class="product-meta">' +
+                                '<span class="price">' + formatRp(p.harga) + '</span>' +
+                                '<span class="stock ' + (outOfStock ? 'stock-empty' : '') + '">' +
+                                    (outOfStock ? 'Stok Habis' : 'Sisa: ' + esc(p.stok)) +
+                                '</span>' +
+                            '</div>' +
+                            (outOfStock
+                                ? '<span class="btn btn-wa is-disabled" aria-disabled="true">Stok Habis</span>'
+                                : '<a class="btn btn-wa" href="' + esc(waLink) + '" target="_blank" rel="noopener noreferrer">Tanya ke WhatsApp</a>') +
+                        '</div>' +
+                    '</article>';
+            }).join('');
+        }
+
+        function resetCatalogFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            renderCatalog();
+        }
+
+        /* =========================================================
+           8. DASHBOARD PENJUAL — PRODUK
+           ========================================================= */
+        function myProducts(user) {
+            return store.products.filter(function (p) { return p.sellerId === user.id; });
+        }
+
+        function fillProductCategoryOptions(selected) {
+            const select = document.getElementById('formKategori');
+            const hint = document.getElementById('categoryHint');
+            if (store.categories.length === 0) {
+                select.innerHTML = '<option value="">Belum ada kategori</option>';
+                select.disabled = true;
+                hint.innerText = 'Buat minimal satu kategori terlebih dahulu.';
+                return;
+            }
+            select.disabled = false;
+            hint.innerText = 'Kategori dikelola pada panel Kategori Produk di bawah.';
+            const chosen = selected || select.value;
+            select.innerHTML = store.categories.map(function (c) {
+                return '<option value="' + esc(c.nama) + '">' + esc(c.nama) + '</option>';
+            }).join('');
+            if (store.categories.some(function (c) { return c.nama === chosen; })) select.value = chosen;
+        }
+
+        function renderSeller() {
+            const user = currentUser();
+            if (!user || user.role !== 'seller') return;
+
+            const mine = myProducts(user);
+            const totalStok = mine.reduce(function (sum, p) { return sum + (Number(p.stok) || 0); }, 0);
+            const nilai = mine.reduce(function (sum, p) { return sum + (Number(p.stok) || 0) * (Number(p.harga) || 0); }, 0);
+
+            document.getElementById('sellerGreeting').innerText =
+                'Toko: ' + (user.toko || user.nama) + ' — kelola produk dan kategori toko Anda.';
+            document.getElementById('sellerSumProduk').innerText = mine.length;
+            document.getElementById('sellerSumStok').innerText = totalStok.toLocaleString('id-ID');
+            document.getElementById('sellerSumKategori').innerText = store.categories.length;
+            document.getElementById('sellerSumNilai').innerText = formatRp(nilai);
+            document.getElementById('sellerTableInfo').innerText = mine.length + ' produk';
+
+            fillProductCategoryOptions();
+
+            const tbody = document.getElementById('sellerTable');
+            if (mine.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Belum ada produk. Tambahkan produk pertama Anda melalui formulir.</td></tr>';
+            } else {
+                tbody.innerHTML = mine.map(function (p) {
+                    return '' +
+                        '<tr>' +
+                            '<td>' +
+                                '<span class="table-product">' +
+                                    '<span class="table-emoji" aria-hidden="true">' + (p.unggulan ? '⭐' : '📦') + '</span>' +
+                                    esc(p.nama) +
+                                '</span>' +
+                            '</td>' +
+                            '<td><span class="badge-cat">' + esc(p.kategori) + '</span></td>' +
+                            '<td>' + formatRp(p.harga) + '</td>' +
+                            '<td><span class="stock ' + (Number(p.stok) === 0 ? 'stock-empty' : '') + '">' + esc(p.stok) + '</span></td>' +
+                            '<td style="text-align: right;">' +
+                                '<div class="table-actions">' +
+                                    '<button type="button" class="btn btn-small" data-action="edit-product" data-id="' + esc(p.id) + '">Edit</button>' +
+                                    '<button type="button" class="btn btn-small btn-danger" data-action="delete-product" data-id="' + esc(p.id) + '">Hapus</button>' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>';
+                }).join('');
+            }
+
+            renderCategoryList();
+        }
+
+        function handleSaveProduct(event) {
+            event.preventDefault();
+            const user = currentUser();
+            if (!user || user.role !== 'seller') {
+                showToast('Hanya penjual yang dapat mengubah produk.', 'warn');
+                return;
+            }
+
+            const id = document.getElementById('formId').value;
+            const nama = document.getElementById('formNama').value.trim();
+            const deskripsi = document.getElementById('formDesc').value.trim();
+            const kategori = document.getElementById('formKategori').value;
+            const harga = Number(document.getElementById('formHarga').value);
+            const stok = Number(document.getElementById('formStok').value);
+            const imageUrl = document.getElementById('formImage').value.trim();
+            const unggulan = document.getElementById('formUnggulan').checked;
+
+            if (!nama) { showToast('Nama produk wajib diisi.', 'warn'); return; }
+            if (!kategori) { showToast('Pilih kategori terlebih dahulu.', 'warn'); return; }
+            if (!Number.isFinite(harga) || harga < 0) { showToast('Harga tidak boleh negatif.', 'warn'); return; }
+            if (!Number.isFinite(stok) || stok < 0) { showToast('Stok tidak boleh negatif.', 'warn'); return; }
+            if (imageUrl && !safeImageUrl(imageUrl)) {
+                showToast('URL gambar harus diawali http:// atau https://', 'warn');
+                return;
+            }
+
+            if (id) {
+                const index = store.products.findIndex(function (p) { return p.id === id; });
+                if (index === -1 || store.products[index].sellerId !== user.id) {
+                    showToast('Produk tidak ditemukan pada toko Anda.', 'warn');
+                    return;
+                }
+                store.products[index] = Object.assign({}, store.products[index], {
+                    nama: nama,
+                    deskripsi: deskripsi,
+                    kategori: kategori,
+                    harga: Math.round(harga),
+                    stok: Math.round(stok),
+                    imageUrl: imageUrl,
+                    unggulan: unggulan
+                });
+                showToast('Produk berhasil diperbarui!', 'success');
+            } else {
+                store.products.push({
+                    id: genId('p'),
+                    nama: nama,
+                    deskripsi: deskripsi,
+                    kategori: kategori,
+                    harga: Math.round(harga),
+                    stok: Math.round(stok),
+                    imageUrl: imageUrl,
+                    unggulan: unggulan,
+                    sellerId: user.id
+                });
+                showToast('Produk baru berhasil ditambahkan!', 'success');
+            }
+
+            saveProducts();
+            resetProductForm();
+            renderSeller();
+        }
+
+        function editProduct(id) {
+            const user = currentUser();
+            if (!user || user.role !== 'seller') return;
+
+            const p = store.products.find(function (x) {
+                return x.id === id && x.sellerId === user.id;
+            });
+            if (!p) return;
+
+            document.getElementById('formTitle').innerText = 'Edit Produk';
+            document.getElementById('formId').value = p.id;
+            document.getElementById('formNama').value = p.nama;
+            document.getElementById('formDesc').value = p.deskripsi || '';
+            fillProductCategoryOptions(p.kategori);
+            document.getElementById('formHarga').value = p.harga;
+            document.getElementById('formStok').value = p.stok;
+            document.getElementById('formImage').value = p.imageUrl || '';
+            document.getElementById('formUnggulan').checked = !!p.unggulan;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteProduct(id) {
+            const user = currentUser();
+            if (!user || user.role !== 'seller') return;
+
+            const p = store.products.find(function (x) {
+                return x.id === id && x.sellerId === user.id;
+            });
+            if (!p) return;
+
+            if (confirm('Yakin ingin menghapus "' + p.nama + '" dari katalog?')) {
+                store.products = store.products.filter(function (x) { return x.id !== id; });
+                saveProducts();
+                renderSeller();
+                showToast('Produk dihapus dari inventaris.', 'warn');
+            }
+        }
+
+        function resetProductForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('formId').value = '';
+            document.getElementById('formTitle').innerText = 'Tambah Produk';
+            fillProductCategoryOptions();
+        }
+
+        /* =========================================================
+           9. DASHBOARD PENJUAL — KATEGORI
+           ========================================================= */
+        function countProductsInCategory(nama) {
+            return store.products.filter(function (p) { return p.kategori === nama; }).length;
+        }
+
+        function renderCategoryList() {
+            const list = document.getElementById('categoryList');
+            if (store.categories.length === 0) {
+                list.innerHTML = '<div class="empty-state" style="padding:32px 16px;"><strong>Belum ada kategori</strong><p>Tambahkan kategori agar produk bisa dikelompokkan.</p></div>';
+                return;
+            }
+
+            list.innerHTML = store.categories.map(function (c) {
+                return '' +
+                    '<div class="cat-row">' +
+                        '<div>' +
+                            '<strong>' + esc(c.nama) + '</strong>' +
+                            (c.deskripsi ? '<div class="cat-desc">' + esc(c.deskripsi) + '</div>' : '') +
+                        '</div>' +
+                        '<div class="cat-actions">' +
+                            '<span class="cat-count">' + countProductsInCategory(c.nama) + ' produk</span>' +
+                            '<button type="button" class="btn btn-small" data-action="edit-category" data-id="' + esc(c.id) + '">Edit</button>' +
+                            '<button type="button" class="btn btn-small btn-danger" data-action="delete-category" data-id="' + esc(c.id) + '">Hapus</button>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function handleSaveCategory(event) {
+            event.preventDefault();
+            const user = currentUser();
+            if (!user || user.role !== 'seller') {
+                showToast('Hanya penjual yang dapat mengelola kategori.', 'warn');
+                return;
+            }
+
+            const id = document.getElementById('catId').value;
+            const nama = document.getElementById('catNama').value.trim();
+            const deskripsi = document.getElementById('catDesc').value.trim();
+
+            if (!nama) { showToast('Nama kategori wajib diisi.', 'warn'); return; }
+
+            const duplicate = store.categories.some(function (c) {
+                return c.id !== id && c.nama.toLowerCase() === nama.toLowerCase();
+            });
+            if (duplicate) { showToast('Nama kategori sudah digunakan.', 'warn'); return; }
+
+            if (id) {
+                const index = store.categories.findIndex(function (c) { return c.id === id; });
+                if (index === -1) return;
+                const oldName = store.categories[index].nama;
+                store.categories[index].nama = nama;
+                store.categories[index].deskripsi = deskripsi;
+                if (oldName !== nama) {
+                    store.products.forEach(function (p) {
+                        if (p.kategori === oldName) p.kategori = nama;
+                    });
+                    saveProducts();
+                }
+                showToast('Kategori berhasil diperbarui.', 'success');
+            } else {
+                store.categories.push({ id: genId('cat'), nama: nama, deskripsi: deskripsi });
+                showToast('Kategori baru ditambahkan.', 'success');
+            }
+
+            saveCategories();
+            resetCategoryForm();
+            renderSeller();
+        }
+
+        function editCategory(id) {
+            const user = currentUser();
+            if (!user || user.role !== 'seller') return;
+
+            const c = store.categories.find(function (x) { return x.id === id; });
+            if (!c) return;
+
+            document.getElementById('catId').value = c.id;
+            document.getElementById('catNama').value = c.nama;
+            document.getElementById('catDesc').value = c.deskripsi || '';
+            document.getElementById('catSubmit').innerText = 'Perbarui Kategori';
+            document.getElementById('catNama').focus();
+        }
+
+        function deleteCategory(id) {
+            const user = currentUser();
+            if (!user || user.role !== 'seller') return;
+
+            const c = store.categories.find(function (x) { return x.id === id; });
+            if (!c) return;
+
+            const used = countProductsInCategory(c.nama);
+            if (used > 0) {
+                showToast('Kategori masih dipakai ' + used + ' produk. Pindahkan produk terlebih dahulu.', 'warn');
+                return;
+            }
+
+            if (confirm('Hapus kategori "' + c.nama + '"?')) {
+                store.categories = store.categories.filter(function (x) { return x.id !== id; });
+                saveCategories();
+                resetCategoryForm();
+                renderSeller();
+                showToast('Kategori dihapus.', 'warn');
+            }
+        }
+
+        function resetCategoryForm() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('catId').value = '';
+            document.getElementById('catSubmit').innerText = 'Simpan Kategori';
+        }
+
+        /* =========================================================
+           10. DASHBOARD ADMIN — PENGGUNA
+           ========================================================= */
+        function countAdmins() {
+            return store.users.filter(function (u) { return u.role === 'admin'; }).length;
+        }
+
+        function countActiveAdmins() {
+            return store.users.filter(function (u) { return u.role === 'admin' && u.aktif !== false; }).length;
+        }
+
+        function renderAdmin() {
+            const user = currentUser();
+            if (!user || user.role !== 'admin') return;
+
+            document.getElementById('adminSumTotal').innerText = store.users.length;
+            document.getElementById('adminSumAdmin').innerText = store.users.filter(function (u) { return u.role === 'admin'; }).length;
+            document.getElementById('adminSumSeller').innerText = store.users.filter(function (u) { return u.role === 'seller'; }).length;
+            document.getElementById('adminSumPembeli').innerText = store.users.filter(function (u) { return u.role === 'pembeli'; }).length;
+            document.getElementById('adminTableInfo').innerText = store.users.length + ' akun';
+
+            const tbody = document.getElementById('userTable');
+            if (store.users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="table-empty">Belum ada pengguna.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = store.users.map(function (u) {
+                const produkCount = store.products.filter(function (p) { return p.sellerId === u.id; }).length;
+                return '' +
+                    '<tr>' +
+                        '<td>' +
+                            '<span class="table-product">' + esc(u.nama) + '</span>' +
+                            '<span class="user-meta">' + (u.role === 'seller' ? (esc(u.toko || 'Toko belum diisi') + ' · ' + produkCount + ' produk') : 'Bergabung ' + esc(u.dibuat || '-')) + '</span>' +
+                        '</td>' +
+                        '<td>' + esc(u.email) + '</td>' +
+                        '<td><span class="role-badge ' + (ROLE_CLASS[u.role] || '') + '">' + esc(ROLE_LABEL[u.role] || u.role) + '</span></td>' +
+                        '<td>' + esc(u.telepon || '-') + '</td>' +
+                        '<td><span class="stock ' + (u.aktif === false ? 'stock-empty' : 'stock-aktif') + '">' + (u.aktif === false ? 'Nonaktif' : 'Aktif') + '</span></td>' +
+                        '<td style="text-align: right;">' +
+                            '<div class="table-actions">' +
+                                '<button type="button" class="btn btn-small" data-action="edit-user" data-id="' + esc(u.id) + '">Edit</button>' +
+                                '<button type="button" class="btn btn-small" data-action="toggle-user" data-id="' + esc(u.id) + '">' + (u.aktif === false ? 'Aktifkan' : 'Nonaktifkan') + '</button>' +
+                                '<button type="button" class="btn btn-small btn-danger" data-action="delete-user" data-id="' + esc(u.id) + '">Hapus</button>' +
+                            '</div>' +
+                        '</td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function handleSaveUser(event) {
+            event.preventDefault();
+            const admin = currentUser();
+            if (!admin || admin.role !== 'admin') {
+                showToast('Hanya admin yang dapat mengelola pengguna.', 'warn');
+                return;
+            }
+
+            const id = document.getElementById('userId').value;
+            const nama = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim().toLowerCase();
+            const password = document.getElementById('userPassword').value;
+            const role = document.getElementById('userRole').value;
+            const telepon = document.getElementById('userPhone').value.trim();
+            const aktif = document.getElementById('userActive').checked;
+
+            if (!nama) { showToast('Nama pengguna wajib diisi.', 'warn'); return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { showToast('Format email tidak valid.', 'warn'); return; }
+            if (['admin', 'seller', 'pembeli'].indexOf(role) === -1) { showToast('Peran tidak valid.', 'warn'); return; }
+
+            const duplicate = store.users.some(function (u) {
+                return u.id !== id && String(u.email || '').toLowerCase() === email;
+            });
+            if (duplicate) { showToast('Email sudah dipakai pengguna lain.', 'warn'); return; }
+
+            const index = store.users.findIndex(function (u) { return u.id === id; });
+
+            if (index === -1) {
+                if (password.length < 6) { showToast('Password minimal 6 karakter.', 'warn'); return; }
+                store.users.push({
+                    id: genId('u'),
+                    nama: nama,
+                    email: email,
+                    password: password,
+                    role: role,
+                    telepon: telepon,
+                    toko: role === 'seller' ? nama : '',
+                    aktif: aktif,
+                    dibuat: new Date().toISOString().slice(0, 10)
+                });
+                showToast('Pengguna baru berhasil ditambahkan.', 'success');
+            } else {
+                const target = store.users[index];
+
+                if (password && password.length < 6) {
+                    showToast('Password minimal 6 karakter.', 'warn');
+                    return;
+                }
+                if (target.role === 'admin' && role !== 'admin' && countAdmins() <= 1) {
+                    showToast('Tidak dapat mengubah peran admin terakhir.', 'warn');
+                    return;
+                }
+                if (target.role === 'admin' && aktif === false && countActiveAdmins() <= 1) {
+                    showToast('Tidak dapat menonaktifkan admin aktif terakhir.', 'warn');
+                    return;
+                }
+                if (target.id === admin.id && aktif === false) {
+                    showToast('Anda tidak dapat menonaktifkan akun sendiri.', 'warn');
+                    return;
+                }
+
+                target.nama = nama;
+                target.email = email;
+                target.role = role;
+                target.telepon = telepon;
+                target.aktif = aktif;
+                if (role === 'seller' && !target.toko) target.toko = nama;
+                if (password) target.password = password;
+                showToast('Data pengguna diperbarui.', 'success');
+            }
+
+            saveUsers();
+            resetUserForm();
+            renderAdmin();
+            renderChrome();
+        }
+
+        function editUser(id) {
+            const admin = currentUser();
+            if (!admin || admin.role !== 'admin') return;
+
+            const u = store.users.find(function (x) { return x.id === id; });
+            if (!u) return;
+
+            document.getElementById('userFormTitle').innerText = 'Edit Pengguna';
+            document.getElementById('userId').value = u.id;
+            document.getElementById('userName').value = u.nama;
+            document.getElementById('userEmail').value = u.email;
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userRole').value = u.role;
+            document.getElementById('userPhone').value = u.telepon || '';
+            document.getElementById('userActive').checked = u.aktif !== false;
+            document.getElementById('userPasswordHint').innerText = 'Kosongkan bila tidak ingin mengganti password.';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleUserActive(id) {
+            const admin = currentUser();
+            if (!admin || admin.role !== 'admin') return;
+
+            const u = store.users.find(function (x) { return x.id === id; });
+            if (!u) return;
+
+            if (u.id === admin.id) {
+                showToast('Anda tidak dapat menonaktifkan akun sendiri.', 'warn');
+                return;
+            }
+            if (u.aktif !== false) {
+                if (u.role === 'admin' && countActiveAdmins() <= 1) {
+                    showToast('Tidak dapat menonaktifkan admin aktif terakhir.', 'warn');
+                    return;
+                }
+                u.aktif = false;
+                showToast(u.nama + ' dinonaktifkan.', 'warn');
+            } else {
+                u.aktif = true;
+                showToast(u.nama + ' diaktifkan kembali.', 'success');
+            }
+
+            saveUsers();
+            renderAdmin();
+        }
+
+        function deleteUser(id) {
+            const admin = currentUser();
+            if (!admin || admin.role !== 'admin') return;
+
+            const u = store.users.find(function (x) { return x.id === id; });
+            if (!u) return;
+
+            if (u.id === admin.id) {
+                showToast('Anda tidak dapat menghapus akun sendiri.', 'warn');
+                return;
+            }
+            if (u.role === 'admin' && countAdmins() <= 1) {
+                showToast('Tidak dapat menghapus admin terakhir.', 'warn');
+                return;
+            }
+
+            const owned = store.products.filter(function (p) { return p.sellerId === u.id; });
+            const extra = owned.length > 0 ? ' ' + owned.length + ' produk miliknya juga akan dihapus.' : '';
+            if (!confirm('Hapus pengguna "' + u.nama + '"?' + extra)) return;
+
+            if (owned.length > 0) {
+                store.products = store.products.filter(function (p) { return p.sellerId !== u.id; });
+                saveProducts();
+            }
+            store.users = store.users.filter(function (x) { return x.id !== u.id; });
+            saveUsers();
+            resetUserForm();
+            renderAdmin();
+            showToast('Pengguna dihapus.', 'warn');
+        }
+
+        function resetUserForm() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('userFormTitle').innerText = 'Tambah Pengguna';
+            document.getElementById('userActive').checked = true;
+            document.getElementById('userPasswordHint').innerText = 'Wajib diisi untuk pengguna baru.';
+        }
+
+        /* =========================================================
+           11. EVENT DELEGATION
+           ========================================================= */
+        document.addEventListener('click', function (event) {
+            const target = event.target.closest('[data-action]');
+            if (!target) return;
+
+            const action = target.dataset.action;
+            const id = target.dataset.id;
+
+            if (action === 'demo') {
+                document.getElementById('loginEmail').value = target.dataset.email || '';
+                document.getElementById('loginPassword').value = target.dataset.password || '';
+                document.getElementById('loginError').hidden = true;
+                return;
+            }
+            if (action === 'edit-product') return editProduct(id);
+            if (action === 'delete-product') return deleteProduct(id);
+            if (action === 'edit-category') return editCategory(id);
+            if (action === 'delete-category') return deleteCategory(id);
+            if (action === 'edit-user') return editUser(id);
+            if (action === 'toggle-user') return toggleUserActive(id);
+            if (action === 'delete-user') return deleteUser(id);
+        });
+
+        /* =========================================================
+           12. INISIALISASI
+           ========================================================= */
+        loadStore();
+        renderChrome();
+        go('katalog');
+    </script>
+</body>
+</html>
