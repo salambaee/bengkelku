@@ -128,7 +128,7 @@ Pendekatan: **mobile-first**; hanya ada dua breakpoint, keduanya `max-width`.
 
 | Rentang | Perilaku kunci |
 | --- | --- |
-| ≤ 700 px | Navbar mobile: brand + tombol hamburger; nav dan area pengguna masuk panel dropdown `#navMenu`; panel menutup otomatis setelah navigasi, Escape, klik luar, atau kembali ke desktop |
+| ≤ 700 px | Navbar mobile: brand + tombol hamburger; nav dan area pengguna masuk panel dropdown `#navMenu`; dashboard dipadatkan (panel 14 px, tabel 0.82 rem, statistik 3 kolom / admin 2×2) |
 | ≤ 560 px | Grid produk **1 kolom**; kontrol katalog **1 kolom**; `.field-row` (harga/stok, kategori) **1 kolom**; footer membungkus |
 | 701–900 px | Navbar desktop (hamburger disembunyikan); kontrol katalog **2 kolom** dengan pencarian selebar baris; dashboard grid **1 kolom**; category grid **1 kolom** |
 | > 900 px | Kontrol **3 kolom** (pencarian 1.6fr, kategori 1fr, sortir 1fr); dashboard **1.5fr + 1fr**; category grid **0.9fr + 1.4fr** |
@@ -251,7 +251,8 @@ langsung tampil di katalog publik."
 **Statistik (3 kartu):** "Produk saya", "Total stok" (hanya stok > 0 dijumlahkan), "Kategori"
 (total kategori global, bukan hanya yang terpakai).
 
-**Grid dashboard** (`1.5fr + 1fr`, turun 1 kolom ≤900 px):
+**Grid dashboard** (`minmax(0, 1.5fr) + minmax(0, 1fr)`, turun `minmax(0, 1fr)` ≤900 px
+agar tabel tidak mendorong grid melewati container):
 
 1. **Panel "Daftar produk"** — tabel 5 kolom: Produk (nama + badge unggulan inline), Kategori,
    Harga, Stok (badge), Aksi. Baris kosong: colspan 5, "Belum ada produk. Tambahkan lewat form
@@ -492,6 +493,8 @@ Aturan khusus (ditampilkan sebagai toast, bukan error field):
 - [ ] WhatsApp: tautan benar per penjual; stok 0 → tombol disabled; tidak ada `target` tanpa
       `rel="noopener"`.
 - [ ] Login: error tampil tanpa menghapus input; sukses mengarah ke home per peran.
+- [ ] Dashboard penjual & admin di 320–1280 px: grid tidak melewati container, tabel hanya
+      scroll di dalam `.table-wrap`, statistik dan panel tetap ringkas di mobile.
 - [ ] Penjual: form tambah vs edit (judul, tombol, Batal), tabel hanya produk sendiri,
       kategori terpakai gagal dihapus, panel data hanya menyentuh produk sendiri.
 - [ ] Admin: statistik cocok dengan tabel, guard admin terakhir/self, status aktif/nonaktif

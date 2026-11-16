@@ -56,6 +56,7 @@ img {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -479,6 +480,10 @@ a {
   align-items: start;
 }
 
+.dashboard-grid > * {
+  min-width: 0;
+}
+
 .panel {
   padding: 20px;
   background: var(--card);
@@ -493,6 +498,7 @@ a {
 }
 
 .table-wrap {
+  position: relative;
   overflow-x: auto;
 }
 
@@ -762,13 +768,71 @@ a {
 
 @media (max-width: 900px) {
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    padding: 4px 0 48px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stats-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
+    padding: 12px 14px;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+  }
+
+  .stat-value {
+    font-size: 1.45rem;
+  }
+
+  .dashboard-grid {
+    gap: 14px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .panel h3 {
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+  }
+
+  .product-table {
+    font-size: 0.82rem;
+  }
+
+  .product-table th {
+    padding: 6px 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .product-table td {
+    padding: 8px;
+  }
+
+  .cell-actions {
+    gap: 4px;
   }
 }
 
 @media (max-width: 560px) {
   .field-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
