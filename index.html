@@ -24,15 +24,29 @@
           <span class="brand-mark" aria-hidden="true">🔧</span>
           BengkelKu
         </a>
-        <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
-          <button type="button" class="nav-btn is-active" data-view="katalog" aria-current="page">
-            Katalog
-          </button>
-          <button type="button" class="nav-btn" data-view="dashboard" id="dashboardBtn" hidden>
-            Dashboard
-          </button>
-        </nav>
-        <div class="user-area" id="userArea"></div>
+        <button
+          type="button"
+          class="nav-toggle"
+          id="navToggle"
+          aria-controls="navMenu"
+          aria-expanded="false"
+          aria-label="Buka menu navigasi"
+        >
+          <span class="nav-toggle-box" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+        <div class="nav-menu" id="navMenu">
+          <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
+            <button type="button" class="nav-btn is-active" data-view="katalog" aria-current="page">
+              Katalog
+            </button>
+            <button type="button" class="nav-btn" data-view="dashboard" id="dashboardBtn" hidden>
+              Dashboard
+            </button>
+          </nav>
+          <div class="user-area" id="userArea"></div>
+        </div>
       </div>
     </header>
 

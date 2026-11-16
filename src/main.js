@@ -60,6 +60,8 @@ function cacheElements() {
   els.userArea = document.getElementById('userArea');
   els.dashboardBtn = document.getElementById('dashboardBtn');
   els.navButtons = Array.from(document.querySelectorAll('#mainNav [data-view]'));
+  els.navToggle = document.getElementById('navToggle');
+  els.navMenu = document.getElementById('navMenu');
 
   els.viewLogin = document.getElementById('view-login');
   els.viewKatalog = document.getElementById('view-katalog');
@@ -109,6 +111,20 @@ function cacheElements() {
   els.btnReset = document.getElementById('btnReset');
 }
 
+/* ----------------------------- Navbar ----------------------------- */
+
+function setNavOpen(open) {
+  if (!els.navToggle || !els.navMenu) return;
+  els.navMenu.classList.toggle('is-open', open);
+  els.navToggle.classList.toggle('is-active', open);
+  els.navToggle.setAttribute('aria-expanded', String(open));
+  els.navToggle.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+}
+
+function closeNav() {
+  setNavOpen(false);
+}
+
 /* --------------------------- Hak akses ---------------------------- */
 
 function canAccess(view) {
@@ -137,6 +153,7 @@ function go(view) {
   }
 
   state.view = view;
+  closeNav();
 
   els.viewLogin.hidden = view !== 'login';
   els.viewKatalog.hidden = view !== 'katalog';
@@ -684,6 +701,27 @@ function handleReset() {
 /* ----------------------------- Events ----------------------------- */
 
 function bindEvents() {
+  els.navToggle?.addEventListener('click', () => {
+    const terbuka = els.navMenu.classList.contains('is-open');
+    setNavOpen(!terbuka);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !els.navMenu?.classList.contains('is-open')) return;
+    closeNav();
+    els.navToggle.focus();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!els.navMenu?.classList.contains('is-open')) return;
+    if (!event.target.closest('.header-inner')) closeNav();
+  });
+
+  const desktopQuery = window.matchMedia('(min-width: 701px)');
+  desktopQuery.addEventListener('change', (event) => {
+    if (event.matches) closeNav();
+  });
+
   els.navButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       if (btn.dataset.view === 'katalog') {
